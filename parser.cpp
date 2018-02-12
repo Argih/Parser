@@ -20,6 +20,7 @@ void Parser::parseFromFile( std::string myString) {
         ss>>lol;
         numbers.push_back((int)lol);
         }
+    is.close();
     }
 
 void Parser::printList() {
@@ -66,4 +67,13 @@ void Parser::ethernetHeader() {
     }
 
 void Parser::ipHeader() {
+    int a = numbers[14];
+    int b = a>>4 &0xf;
+    int c = a&0xf;
+
+    std::cout<<"\n\nVersion de ip: "<<b<<"\n";
+    std::cout<<"\nIHL = "<<std::dec<<b*c<<"\n";
+    std::cout<<std::hex;
+
+
     }

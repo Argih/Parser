@@ -8,6 +8,7 @@ string my="trama.txt";
 Parser myParser;
 
 myParser.parseFromFile(my);
-myParser.printList();
+//myParser.printList();
 myParser.ethernetHeader();
+myParser.ipHeader();
 }
