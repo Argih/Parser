@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <bitset>
 class Parser {
     private:
         std::vector<int> numbers;

@@ -67,13 +67,84 @@ void Parser::ethernetHeader() {
     }
 
 void Parser::ipHeader() {
+    //se asigna la posición 14 a la variable a
     int a = numbers[14];
+    //se asigna los últimos 4 bits de "a" a la variable b
     int b = a>>4 &0xf;
+    //se asignan los primeros 4 bits de "a" la variable c
     int c = a&0xf;
 
     std::cout<<"\n\nVersion de ip: "<<b<<"\n";
+    //el valor se imprime en decimal
     std::cout<<"\nIHL = "<<std::dec<<b*c<<"\n";
+    //se regresa el standar output a hexadecimal
     std::cout<<std::hex;
-
+    //se asigna el valor 15 del vector a a
+    a = numbers[15];
+    //se crea un bitset a partir de esa variable
+    std::bitset<8> m(a);
+    //se crea un bitset de 3 bits para el presedente
+    std::bitset<3>t;
+    //se asignan los primeros (primero el más significativo) 3 bits de m a t
+    t[2]=m[7];
+    t[1]=m[6];
+    t[0]=m[5];
+    //se crea un bitset de 4 bits para el TOS
+    std::bitset<4> s;
+    //se asignan los bits 4 a 1 de m a s
+    s[3]=m[4];
+    s[2]=m[3];
+    s[1]=m[2];
+    s[0]=m[1];
+    //casting del bitset t para evaluar posibilidades
+    int rs = (int)(t.to_ulong());
+    std::cout <<"\nPrecedente: ";
+    switch(rs){
+        case 0b000:
+            std::cout <<"Rutina\n";
+            break;
+        case 0b001:
+            std::cout <<"Prioridad\n";
+            break;
+        case 0b010:
+            std::cout<<"Inmediato\n";
+            break;
+        case 0b011:
+            std::cout <<"Flash\n";
+            break;
+        case 0b100:
+            std::cout <<"Flash Override\n";
+            break;
+        case 0b101:
+            std::cout <<"Critico\n";
+            break;
+        case 0b110:
+            std::cout <<"Control de red\n";
+            break;
+        case 0b111:
+            std::cout <<"Control inter red\n";
+            break;
+        }
+        rs=(int)(s.to_ulong());
+        std::cout<<"\nTOS: ";
+        switch(rs){
+            case 0b0000:
+                std::cout<<"Normal\n";
+                break;
+            case 0b0001:
+                std::cout<<"Minimizar coste\n";
+                break;
+            case 0b0010:
+                std::cout<<"Maximizar fiabilidad\n";
+                break;
+            case 0b0100:
+                std::cout<<"Maximizar densidad de flujo\n";
+                break;
+            case 0b1000:
+                std::cout<<"Maximizar recorrido\n";
+                break;
+            default:
+                std::cout<<"No asignado";
+            }
 
     }
