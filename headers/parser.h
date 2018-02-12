@@ -1,18 +1,23 @@
 #ifndef PARSER_H_INCLUDED
 #define PARSER_H_INCLUDED
 
-#include <vector>
+#include <iostream>
+#include<fstream>
+#include <sstream>
 #include <string>
-#include <fstream>
+#include <vector>
 class Parser {
     private:
         std::vector<int> numbers;
-        std::ifstream myFile;
+        std::ifstream is;
     public:
         Parser();
         ~Parser();
-        parseFromFile(std::ifstream);
-        parseFromString(std::string);
+        void parseFromFile(std::string);
+        void parseFromString(std::string);
+        void ethernetHeader();
+        void ipHeader();
+        void printList();
     };
 
 #endif // PARSER_H_INCLUDED

@@ -34,6 +34,7 @@
 		</Compiler>
 		<Unit filename="headers/parser.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="parser.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
