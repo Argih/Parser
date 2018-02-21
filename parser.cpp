@@ -32,7 +32,7 @@ void Parser::printList() {
     }
 
 void Parser::ethernetHeader() {
-    std::cout <<"Mac de destino: ";
+    std::cout <<"Mac de destino: "<<std::hex;
     for(std::vector<int>::iterator it = numbers.begin(); it!=numbers.begin()+6; it++) {
         std::cout << *it;
         if(it!=numbers.begin()+5) {
@@ -146,5 +146,91 @@ void Parser::ipHeader() {
             default:
                 std::cout<<"No asignado";
             }
+    //TAMAÑO DE DATAGRAMA
+    int mm;
+    mm=(numbers[16]<<8|numbers[17]);
+    std::cout<<std::dec<<"Tamaño del datagrama: "<<mm<<" bytes\n";
+    //ID DEL DATAGRAMA
+    mm=(numbers[18]<<8|numbers[19]);
+    std::cout<<"\nId del datagrama: "<<mm<<"\n";
 
+    //FLAG1 MF & DF
+    std::bitset<8>pf(numbers[20]);
+    std::bitset<3>flags;
+    flags[2]=pf[7];
+    flags[1]=pf[6];
+    flags[0]=pf[5];
+    std::cout<<"\nBandera 1: "<<flags[0]<<"\n";
+    std::cout<<"\nDF: ";
+    if(flags[1]){
+        std::cout<<"True\n";
+        }
+    else{
+        std::cout<<"False\n";
+        }
+    std::cout<<"\nMF: ";
+    if((bool)flags[2]){
+        std::cout<<"True\n";
+        }
+    else{
+        std::cout<<"False\n";
+        }
+
+    //DESFACE DEL DATAGRAMA
+    int fOffset;
+    fOffset =((numbers[20]<<16)|numbers[21])&0x1FFF;
+    std::bitset<16>tem(fOffset);
+    std::cout<<std::dec<<"\nDesface del datagrama: "<<fOffset<<"\n";
+
+    //TIEMPO DE VIDA
+    std::cout<<"\nTIempo de vida: "<<numbers[22]<<" saltos\n";
+    //PROTOCOLO
+    std::cout<<"\nTipo de protocolo: ";
+    switch(numbers[23]){
+        case 0x00:
+            std::cout<<"HOPOPT\n";
+            break;
+        case 0x01:
+            std::cout<<"ICMP\n";
+            break;
+        case 0x02:
+            std::cout<<"IGMP\n";
+            break;
+        case 0x03:
+            std::cout<<"GGP\n";
+            break;
+        case 0x04:
+            std::cout<<"IP-in-IP\n";
+            break;
+        case 0x05:
+            std::cout<<"ST\n";
+            break;
+        case 0x06:
+            std::cout<<"TCP\n";
+            break;
+        default:
+            std::cout<<"En desarrollo\n";
+        }
+
+        //CRC16
+        int crc;
+        crc= (numbers[24]<<8)|numbers[25];
+        std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";
+
+        //IP de origen
+
+        std::cout<<std::dec<<"\nIp de origen: ";
+        for(std::vector<int>::iterator it = numbers.begin()+26; it!=numbers.begin()+30; it++) {
+        std::cout << *it;
+        if(it!=numbers.begin()+29) {
+            std::cout<<".";
+            }
+        }
+        std::cout<<std::dec<<"\n\nIp de destino: ";
+        for(std::vector<int>::iterator it = numbers.begin()+30; it!=numbers.begin()+34; it++) {
+        std::cout << *it;
+        if(it!=numbers.begin()+33) {
+            std::cout<<".";
+            }
+        }
     }
