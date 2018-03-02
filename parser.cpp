@@ -48,21 +48,21 @@ void Parser::ethernetHeader() {
         }
 
     int a = (numbers[12]<<8) | (numbers[13]);
-    if(a>0x5DC){
-    std::cout<<"\n\nTipo de trama: ";
-    switch(a){
-        case 0x0800:
-            std::cout<< "Ip v4";
-            break;
-        case 0x0806:
-            std::cout<<"ARP";
+    if(a>0x5DC) {
+        std::cout<<"\n\nTipo de trama: ";
+        switch(a) {
+            case 0x0800:
+                std::cout<< "Ip v4";
                 break;
-        default :
-            std::cout<<"Desconocido";
+            case 0x0806:
+                std::cout<<"ARP";
+                break;
+            default :
+                std::cout<<"Desconocido";
             }
         }
-    else{
-         std::cout<<"Tamaño de trama: "<<std::dec<<a<<"bytes";
+    else {
+        std::cout<<"Tamaño de trama: "<<std::dec<<a<<"bytes";
         }
     }
 
@@ -99,7 +99,7 @@ void Parser::ipHeader() {
     //casting del bitset t para evaluar posibilidades
     int rs = (int)(t.to_ulong());
     std::cout <<"\nPrecedente: ";
-    switch(rs){
+    switch(rs) {
         case 0b000:
             std::cout <<"Rutina\n";
             break;
@@ -125,27 +125,27 @@ void Parser::ipHeader() {
             std::cout <<"Control inter red\n";
             break;
         }
-        rs=(int)(s.to_ulong());
-        std::cout<<"\nTOS: ";
-        switch(rs){
-            case 0b0000:
-                std::cout<<"Normal\n";
-                break;
-            case 0b0001:
-                std::cout<<"Minimizar coste\n";
-                break;
-            case 0b0010:
-                std::cout<<"Maximizar fiabilidad\n";
-                break;
-            case 0b0100:
-                std::cout<<"Maximizar densidad de flujo\n";
-                break;
-            case 0b1000:
-                std::cout<<"Maximizar recorrido\n";
-                break;
-            default:
-                std::cout<<"No asignado";
-            }
+    rs=(int)(s.to_ulong());
+    std::cout<<"\nTOS: ";
+    switch(rs) {
+        case 0b0000:
+            std::cout<<"Normal\n";
+            break;
+        case 0b0001:
+            std::cout<<"Minimizar coste\n";
+            break;
+        case 0b0010:
+            std::cout<<"Maximizar fiabilidad\n";
+            break;
+        case 0b0100:
+            std::cout<<"Maximizar densidad de flujo\n";
+            break;
+        case 0b1000:
+            std::cout<<"Maximizar recorrido\n";
+            break;
+        default:
+            std::cout<<"No asignado";
+        }
     //TAMAÑO DE DATAGRAMA
     int mm;
     mm=(numbers[16]<<8|numbers[17]);
@@ -162,17 +162,17 @@ void Parser::ipHeader() {
     flags[0]=pf[5];
     std::cout<<"\nBandera 1: "<<flags[0]<<"\n";
     std::cout<<"\nDF: ";
-    if(flags[1]){
+    if(flags[1]) {
         std::cout<<"True\n";
         }
-    else{
+    else {
         std::cout<<"False\n";
         }
     std::cout<<"\nMF: ";
-    if((bool)flags[2]){
+    if((bool)flags[2]) {
         std::cout<<"True\n";
         }
-    else{
+    else {
         std::cout<<"False\n";
         }
 
@@ -186,7 +186,7 @@ void Parser::ipHeader() {
     std::cout<<"\nTIempo de vida: "<<numbers[22]<<" saltos\n";
     //PROTOCOLO
     std::cout<<"\nTipo de protocolo: ";
-    switch(numbers[23]){
+    switch(numbers[23]) {
         case 0x00:
             std::cout<<"HOPOPT\n";
             break;
@@ -212,25 +212,64 @@ void Parser::ipHeader() {
             std::cout<<"En desarrollo\n";
         }
 
-        //CRC16
-        int crc;
-        crc= (numbers[24]<<8)|numbers[25];
-        std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";
+    //CRC16
+    int crc;
+    crc= (numbers[24]<<8)|numbers[25];
+    std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";
 
-        //IP de origen
+    //IP de origen
 
-        std::cout<<std::dec<<"\nIp de origen: ";
-        for(std::vector<int>::iterator it = numbers.begin()+26; it!=numbers.begin()+30; it++) {
+    std::cout<<std::dec<<"\nIp de origen: ";
+    for(std::vector<int>::iterator it = numbers.begin()+26; it!=numbers.begin()+30; it++) {
         std::cout << *it;
         if(it!=numbers.begin()+29) {
             std::cout<<".";
             }
         }
-        std::cout<<std::dec<<"\n\nIp de destino: ";
-        for(std::vector<int>::iterator it = numbers.begin()+30; it!=numbers.begin()+34; it++) {
+    std::cout<<std::dec<<"\n\nIp de destino: ";
+    for(std::vector<int>::iterator it = numbers.begin()+30; it!=numbers.begin()+34; it++) {
         std::cout << *it;
         if(it!=numbers.begin()+33) {
             std::cout<<".";
             }
+        }
+    }
+
+void Parser::tcpHeader() {
+    int temp;
+    temp= (numbers[34]<<8)|numbers[35];
+    std::cout<<std::dec<<"\n\nPuerto de origen: "<<temp<<"\n";
+    temp= (numbers[36]<<8)|numbers[37];
+    std::cout<<std::dec<<"\nPuerto de destino: "<<temp<<"\n";
+    uint32_t temp32;
+    temp32= (numbers[38]<<24)|(numbers[39]<<16)|(numbers[40]<<8)|numbers[41];
+    temp=(numbers[46]<<8)|numbers[47];
+    std::bitset<16>tcp(temp);
+    if(tcp[1]) {
+        std::cout<<std::hex<<"\nNumero de secuencia: "<<temp32<<"\n";
+        }
+    temp32=(numbers[42]<<24)|(numbers[43]<<16)|(numbers[44]<<8)|numbers[45];
+    if(tcp[4]) {
+        std::cout<<std::hex<<"\nNumero de confirmacion: "<<temp32<<"\n";
+        }
+    temp=numbers[46]>>4%0xF;
+    int sizeOfOptions = (temp*32)/8;
+    std::cout<<"\nDesplazamiento de datos: "<<temp<<"\n";
+    std::cout<<"\nNS: "<<tcp[8]<<"\n";
+    std::cout<<"\nCWR: "<<tcp[7]<<"\n";
+    std::cout<<"\nECE: "<<tcp[6]<<"\n";
+    std::cout<<"\nURG: "<<tcp[5]<<"\n";
+    std::cout<<"\nACK: "<<tcp[4]<<"\n";
+    std::cout<<"\nPSH: "<<tcp[3]<<"\n";
+    std::cout<<"\nRST: "<<tcp[2]<<"\n";
+    std::cout<<"\nSYS: "<<tcp[1]<<"\n";
+    std::cout<<"\nFIN: "<<tcp[0]<<"\n";
+    temp=(numbers[48]<<8)|numbers[49];
+    std::cout<<std::dec<<"\nTamanio de ventana: "<<temp<<"\n";
+    temp=(numbers[50]<<8)|numbers[51];
+    std::cout<<std::hex<<"\nSuma de comprobacion: 0x"<<temp<<"\n";
+    if(tcp[5]){
+        temp=(numbers[52]<<8)|numbers[53];
+        std::cout<<std::hex<<"\nPosicion del ultimo byte urgente: "<<temp<<"\n";
         }
     }

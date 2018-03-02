@@ -11,4 +11,5 @@ myParser.parseFromFile(my);
 //myParser.printList();
 myParser.ethernetHeader();
 myParser.ipHeader();
+myParser.tcpHeader();
 }

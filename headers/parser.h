@@ -19,6 +19,7 @@ class Parser {
         void ethernetHeader();
         void ipHeader();
         void printList();
+        void tcpHeader();
     };
 
 #endif // PARSER_H_INCLUDED
