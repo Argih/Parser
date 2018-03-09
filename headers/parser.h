@@ -11,6 +11,8 @@ class Parser {
     private:
         std::vector<int> numbers;
         std::ifstream is;
+        bool checkSum();
+        int IHL;
     public:
         Parser();
         ~Parser();

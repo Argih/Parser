@@ -76,7 +76,8 @@ void Parser::ipHeader() {
 
     std::cout<<"\n\nVersion de ip: "<<b<<"\n";
     //el valor se imprime en decimal
-    std::cout<<"\nIHL = "<<std::dec<<b*c<<"\n";
+    IHL=b*c;
+    std::cout<<"\nIHL = "<<std::dec<<IHL<<"\n";
     //se regresa el standar output a hexadecimal
     std::cout<<std::hex;
     //se asigna el valor 15 del vector a a
@@ -213,10 +214,15 @@ void Parser::ipHeader() {
         }
 
     //CRC16
-    int crc;
+   /* int crc;
     crc= (numbers[24]<<8)|numbers[25];
-    std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";
-
+    std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";*/
+    if(checkSum()){
+        std::cout<<"\nCRC correcto\n";
+    }
+    else{
+        std::cout<<"\nCRC incorrecto\n";
+    }
     //IP de origen
 
     std::cout<<std::dec<<"\nIp de origen: ";
@@ -253,7 +259,7 @@ void Parser::tcpHeader() {
         std::cout<<std::hex<<"\nNumero de confirmacion: "<<temp32<<"\n";
         }
     temp=numbers[46]>>4%0xF;
-    int sizeOfOptions = (temp*32)/8;
+//    int sizeOfOptions = (temp*32)/8;
     std::cout<<"\nDesplazamiento de datos: "<<temp<<"\n";
     std::cout<<"\nNS: "<<tcp[8]<<"\n";
     std::cout<<"\nCWR: "<<tcp[7]<<"\n";
@@ -268,8 +274,28 @@ void Parser::tcpHeader() {
     std::cout<<std::dec<<"\nTamanio de ventana: "<<temp<<"\n";
     temp=(numbers[50]<<8)|numbers[51];
     std::cout<<std::hex<<"\nSuma de comprobacion: 0x"<<temp<<"\n";
-    if(tcp[5]){
+    if(tcp[5]) {
         temp=(numbers[52]<<8)|numbers[53];
         std::cout<<std::hex<<"\nPosicion del ultimo byte urgente: "<<temp<<"\n";
         }
+    }
+bool Parser::checkSum() {
+    uint16_t res, temp, tot,fin, crc, temp2;
+    uint32_t sum=0, lolsum;
+    crc=(numbers[24]<<8)|numbers[25];
+    for(int i=0;i<IHL;i++){
+        temp2=(numbers[14+i]<<8)|numbers[(++i)+14];
+        if(temp2!=crc){
+            sum+=temp2;
+            }
+        }
+    res=sum&0xFFFF;
+    lolsum=sum&0xFFFF0000;
+    temp=(lolsum)>>16;
+    tot = res+temp;
+    fin = ~tot;
+    if(fin==crc){
+        return true;
+    }
+    return false;
     }
