@@ -214,15 +214,15 @@ void Parser::ipHeader() {
         }
 
     //CRC16
-   /* int crc;
-    crc= (numbers[24]<<8)|numbers[25];
-    std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";*/
-    if(checkSum()){
+    /* int crc;
+     crc= (numbers[24]<<8)|numbers[25];
+     std::cout<<"\nChecksum: "<<std::hex<<crc<<"\n";*/
+    if(checkSum()) {
         std::cout<<"\nCRC correcto\n";
-    }
-    else{
+        }
+    else {
         std::cout<<"\nCRC incorrecto\n";
-    }
+        }
     //IP de origen
 
     std::cout<<std::dec<<"\nIp de origen: ";
@@ -283,9 +283,9 @@ bool Parser::checkSum() {
     uint16_t res, temp, tot,fin, crc, temp2;
     uint32_t sum=0, lolsum;
     crc=(numbers[24]<<8)|numbers[25];
-    for(int i=0;i<IHL;i++){
+    for(int i=0; i<IHL; i++) {
         temp2=(numbers[14+i]<<8)|numbers[(++i)+14];
-        if(temp2!=crc){
+        if(temp2!=crc) {
             sum+=temp2;
             }
         }
@@ -294,8 +294,8 @@ bool Parser::checkSum() {
     temp=(lolsum)>>16;
     tot = res+temp;
     fin = ~tot;
-    if(fin==crc){
+    if(fin==crc) {
         return true;
-    }
+        }
     return false;
     }
